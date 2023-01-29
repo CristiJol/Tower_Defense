@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Drawing;
+﻿using System.Drawing;
 
 namespace Tower_Defense
 {
@@ -58,7 +53,7 @@ namespace Tower_Defense
         public void Shoot(Enemy enemy)
         {
             if(Engine.time % 10 == 0)
-            Engine.projectiles.Add(new Projectile(image, 40, attack, Engine.tilex/2, Engine.tiley/2, new PointF(position.X + Engine.tilex/2, position.Y + Engine.tiley/2), enemy));
+                Engine.projectiles.Add(new Projectile(image, 25, attack, Engine.tilex/2, Engine.tiley/2, new PointF(position.X + Engine.tilex/2, position.Y + Engine.tiley/2), enemy));
         }
     }
 }

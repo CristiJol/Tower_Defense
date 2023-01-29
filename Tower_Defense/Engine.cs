@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace Tower_Defense
 {
@@ -27,8 +24,6 @@ namespace Tower_Defense
 
         public static Image enemyImage = Image.FromFile("../../Images/orc.png");
 
-        public static PointF toDelete;
-
         public static void Initialize(Form1 f)
         {
             form = f;
@@ -40,11 +35,11 @@ namespace Tower_Defense
             graphics = Graphics.FromImage(bitmap);
             CreateTiles();
 
-            currentWave.Add(new Enemy(enemyImage, 25, 20, 50, tilex, tiley , 0));
+            currentWave.Add(new Enemy(enemyImage, 15, 20, 50, tilex, tiley , 0));
             currentWave.Add(new Enemy(enemyImage, 15, 20, 50, tilex, tiley, 5));
             currentWave.Add(new Enemy(enemyImage, 10, 20, 50, tilex, tiley, 15));
             currentWave.Add(new Enemy(enemyImage, 10, 20, 50, tilex, tiley, 25));
-            currentWave.Add(new Enemy(enemyImage, 35, 20, 50, tilex, tiley, 35));
+            currentWave.Add(new Enemy(enemyImage, 15, 20, 50, tilex, tiley, 35));
 
         }
         public static void Tick()
@@ -188,7 +183,6 @@ namespace Tower_Defense
             {
                 projectile.Draw();
             }
-            graphics.FillEllipse(new SolidBrush(Color.Red), toDelete.X, toDelete.Y, 50, 50);
             form.pictureBox1.Image = bitmap; 
         }
         

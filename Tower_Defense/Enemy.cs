@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Tower_Defense
 {
@@ -24,15 +20,15 @@ namespace Tower_Defense
             this.sizex = sizex;
             this.sizey = sizey;
             this.spawntime = spawntime;
-            currentPosition = new PathPoint(new PointF((float)(Engine.tiley-sizey)/2, Engine.tilex + (float)(Engine.tilex-sizex)/2), "south");
+            currentPosition = new PathPoint(new PointF(Engine.tilex + (float)(Engine.tilex-sizex)/2, (float)(Engine.tiley - sizey) / 2), "south");
 
-            path.Add(new PathPoint(new PointF(6 * Engine.tiley + (float)(Engine.tiley-sizey)/2 , Engine.tilex + (float)(Engine.tilex-sizex)/2), "east"));
-            path.Add(new PathPoint(new PointF(6 * Engine.tiley + (float)(Engine.tiley-sizey)/2, 4 * Engine.tilex + (float)(Engine.tilex-sizex)/2), "north"));
-            path.Add(new PathPoint(new PointF(Engine.tiley + (float)(Engine.tiley-sizey)/2, 4 * Engine.tilex + (float)(Engine.tilex-sizex)/2), "east"));
-            path.Add(new PathPoint(new PointF(Engine.tiley + (float)(Engine.tiley-sizey)/2, 10 * Engine.tilex + (float)(Engine.tilex-sizex)/2), "south"));
-            path.Add(new PathPoint(new PointF(6 * Engine.tiley + (float)(Engine.tiley-sizey)/2, 10 * Engine.tilex + (float)(Engine.tilex-sizex)/2), "west"));
-            path.Add(new PathPoint(new PointF(6 * Engine.tiley + (float)(Engine.tiley-sizey)/2, 7 * Engine.tilex + (float)(Engine.tilex-sizex)/2), "north"));
-            path.Add(new PathPoint(new PointF(4 * Engine.tiley + (float)(Engine.tiley-sizey)/2, 7 * Engine.tilex + (float)(Engine.tilex-sizex)/2), "finish"));
+            path.Add(new PathPoint(new PointF(Engine.tilex + (float)(Engine.tilex-sizex)/2, 6 * Engine.tiley + (float)(Engine.tiley - sizey) / 2), "east"));
+            path.Add(new PathPoint(new PointF(4 * Engine.tilex + (float)(Engine.tilex-sizex)/2, 6 * Engine.tiley + (float)(Engine.tiley - sizey) / 2), "north"));
+            path.Add(new PathPoint(new PointF(4 * Engine.tilex + (float)(Engine.tilex-sizex)/2, Engine.tiley + (float)(Engine.tiley - sizey) / 2), "east"));
+            path.Add(new PathPoint(new PointF(10 * Engine.tilex + (float)(Engine.tilex-sizex)/2, Engine.tiley + (float)(Engine.tiley - sizey) / 2), "south"));
+            path.Add(new PathPoint(new PointF(10 * Engine.tilex + (float)(Engine.tilex-sizex)/2, 6 * Engine.tiley + (float)(Engine.tiley - sizey) / 2), "west"));
+            path.Add(new PathPoint(new PointF(7 * Engine.tilex + (float)(Engine.tilex-sizex)/2, 6 * Engine.tiley + (float)(Engine.tiley - sizey) / 2), "north"));
+            path.Add(new PathPoint(new PointF(7 * Engine.tilex + (float)(Engine.tilex-sizex)/2, 4 * Engine.tiley + (float)(Engine.tiley - sizey) / 2), "finish"));
         }
         public bool Move()
         {
@@ -46,10 +42,10 @@ namespace Tower_Defense
             }
             switch (currentPosition.direction)
             {
-                case "south": currentPosition.point = new PointF(currentPosition.point.X + (float)speed, currentPosition.point.Y); break;
-                case "east": currentPosition.point = new PointF(currentPosition.point.X, currentPosition.point.Y + (float)speed); break;
-                case "north": currentPosition.point = new PointF(currentPosition.point.X - (float)speed, currentPosition.point.Y); break;
-                case "west": currentPosition.point = new PointF(currentPosition.point.X, currentPosition.point.Y - (float)speed); break;
+                case "south": currentPosition.point = new PointF(currentPosition.point.X, currentPosition.point.Y + (float)speed); break;
+                case "east": currentPosition.point = new PointF(currentPosition.point.X + (float)speed, currentPosition.point.Y); break;
+                case "north": currentPosition.point = new PointF(currentPosition.point.X, currentPosition.point.Y - (float)speed); break;
+                case "west": currentPosition.point = new PointF(currentPosition.point.X - (float)speed, currentPosition.point.Y); break;
                 case "finish":
                 default:
                     return true;
@@ -58,7 +54,7 @@ namespace Tower_Defense
         }
         public void Draw()
         {
-            Engine.graphics.DrawImage(image, currentPosition.point.Y, currentPosition.point.X, (float)sizex, (float)sizey);
+            Engine.graphics.DrawImage(image, currentPosition.point.X, currentPosition.point.Y, (float)sizex, (float)sizey);
         }
     }
 
