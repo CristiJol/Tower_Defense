@@ -14,6 +14,8 @@ namespace Tower_Defense
     {
         public Image background = Image.FromFile("../../Images/map.jpg");
         public int ID;
+        public bool isPaused;
+
         public Form1()
         {
             InitializeComponent();
@@ -44,6 +46,32 @@ namespace Tower_Defense
         {
             Engine.Tick();
             Engine.DrawEverything();
+        }
+        public void PauseGame(bool pause)
+        {
+            if (pause)
+            {
+                // Pauză joc și afișare fereastră de pauză
+                // isPaused = true;
+                timer1.Enabled = false;
+                PauseForm pauseForm = new PauseForm(this); // Furnizăm instanța curentă de Form1
+                pauseForm.ShowDialog();
+                // isPaused = false; // Reia jocul când fereastra de pauză se închide
+                timer1.Enabled = true;
+            }
+            else
+            {
+                // Reia jocul
+                isPaused = false;
+            }
+        }
+
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Escape)
+            {
+                PauseGame(true);
+            }
         }
     }
 }

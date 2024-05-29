@@ -7,6 +7,14 @@ namespace Tower_Defense
 {
     public class Engine
     {
+        public static bool isPaused
+        {
+            get { return form.isPaused; }
+        }
+        public static bool isGameWon = false;
+
+
+
         public static Tile[,] tiles;
         public static Form1 form;
 
@@ -44,43 +52,95 @@ namespace Tower_Defense
         }
         public static void Tick()
         {
-            time++; 
-            if (currentWave.Any() && currentWave[0].spawntime <= time)
+            if (!isPaused)
             {
-                enemies.Add(currentWave[0]);
-                currentWave.RemoveAt(0);
+                time++;
+
+                if (currentWave.Any() && currentWave[0].spawntime <= time)
+                {
+                    enemies.Add(currentWave[0]);
+                    currentWave.RemoveAt(0);
+                }
+
+                MoveEnemies();
+                ShootEverything();
+                Lose();
+
+                if (isGameWon)
+                {
+                    // Afișează fereastra de felicitare și revino la ecranul principal după 5 secunde
+                    isGameWon = false;
+                    ShowVictoryScreen();
+                }
             }
-            MoveEnemies();
-            ShootEverything();
-            Lose();
         }
-        private static void ShootEverything()
+        public static void ShootEverything()
         {
             foreach (Tower tower in towers)
             {
                 Enemy target = tower.DetectEnemy();
-                if(target != null)
+                if (target != null)
                     tower.Shoot(target);
             }
-            foreach (Projectile projectile in projectiles)
+            foreach (Projectile projectile in projectiles.ToList())
             {
-                projectile.Move();
-            }
-        }
+                if (!isPaused) // Adaugă această verificare pentru a opri mișcarea proiectilelor în timpul pauzei
+                {
+                    projectile.Move();
 
-        public static void MoveEnemies()
-        {
+                    // Verifică dacă proiectilul a atins inamicul și aplică damage-ul
+                    if (projectile.target != null && Distance(projectile.position, projectile.target.currentPosition.point) < 5) // Ajustează 5 la distanța potrivită
+                    {
+                        projectile.target.health -= projectile.damage;
+
+                        // Elimină proiectilul după ce a lovit inamicul
+                        projectiles.Remove(projectile);
+                    }
+                }
+            }
+            // Elimină inamicul după ce viața sa a ajuns sub 0
             for (int i = 0; i < enemies.Count; i++)
             {
-                Enemy enemy = enemies[i];
-                if (enemy.Move())
+                if (enemies[i].health <= 0)
                 {
-                    castleHealth -= enemy.damage;
                     enemies.Remove(enemies[i]);
                     i--;
                 }
             }
+            if (enemies.Count == 0 && currentWave.Count == 0)
+            {
+                isGameWon = true;
+            }
         }
+        public static void MoveEnemies()
+        {
+            if (!isPaused)
+            {
+                for (int i = 0; i < enemies.Count; i++)
+                {
+                    Enemy enemy = enemies[i];
+                    if (enemy.Move())
+                    {
+                        castleHealth -= enemy.damage;
+                        enemies.Remove(enemies[i]);
+                        i--;
+                    }
+                }
+            }
+        }
+        public static void RemoveDeadEnemies()
+        {
+            for (int i = 0; i < enemies.Count; i++)
+            {
+                if (enemies[i].currentPosition.direction == "finish")
+                {
+                    castleHealth -= enemies[i].damage;
+                    enemies.RemoveAt(i);
+                    i--;
+                }
+            }
+        }
+
         public static void Lose()
         {
 
@@ -106,32 +166,40 @@ namespace Tower_Defense
 
         public static void AddNewTower(Point location)
         {
-            if (tiles[location.X/tilex, location.Y/tiley].isPlaceable)
+            if (tiles[location.X / tilex, location.Y / tiley].isPlaceable)
             {
                 isBlur = false;
                 Image img;
-                float range; 
+                float range;
+                int attack; // Adaugă o variabilă pentru a stoca valoarea de atac (damage) în funcție de form.ID
+
+                // Atribuie valoarea de atac corespunzătoare în funcție de form.ID
                 if (form.ID == 1)
                 {
                     img = form.pictureBox2.Image;
                     range = 150;
+                    attack = 20; // Schimbă valoarea în funcție de nevoile tale
                 }
-                else if(form.ID == 2)
+                else if (form.ID == 2)
                 {
                     img = form.pictureBox3.Image;
                     range = 200;
+                    attack = 30; // Schimbă valoarea în funcție de nevoile tale
                 }
                 else
                 {
                     img = form.pictureBox4.Image;
                     range = 100;
+                    attack = 15; // Schimbă valoarea în funcție de nevoile tale
                 }
-                Tower tower = new Tower(range, 0, 0, tilex, tiley, img, new Point(location.X /tilex * tilex, location.Y / tiley * tiley));
+
+                Tower tower = new Tower(range, 0, tilex, tiley, img, new Point(location.X / tilex * tilex, location.Y / tiley * tiley), attack);
                 towers.Add(tower);
-                tiles[location.X/tilex, location.Y/tiley].isPlaceable = false;
+                tiles[location.X / tilex, location.Y / tiley].isPlaceable = false;
             }
             DrawEverything();
         }
+
 
         public static bool Placeble()
         {
@@ -204,10 +272,44 @@ namespace Tower_Defense
             }
             form.pictureBox1.Image = bitmap;
         }
+        public static void CheckProjectileEnemyCollisions()
+        {
+            for (int i = 0; i < projectiles.Count; i++)
+            {
+                Projectile projectile = projectiles[i];
+
+                foreach (Enemy enemy in enemies)
+                {
+                    // Verifică dacă proiectilul atinge inamicul
+                    if (Distance(projectile.position, enemy.currentPosition.point) < 5) // Setează o distanță prag aici
+                    {
+                        projectile.ApplyDamage();
+                        projectiles.RemoveAt(i);
+                        i--;
+                        break; // Ieșim din bucla foreach, deoarece proiectilul a lovit deja un inamic
+                    }
+                }
+            }
+        }
+        
+
 
         public static float Distance(PointF p1, PointF p2)
         {
             return (float)Math.Sqrt((p1.X - p2.X) * (p1.X - p2.X) + (p1.Y - p2.Y) * (p1.Y - p2.Y));
         }
+        public static void ShowVictoryScreen()
+        {
+            form.timer1.Stop(); // Oprește timerul pentru a opri jocul
+            CongratulationsForm congratulationsForm = new CongratulationsForm(); // Creați o nouă fereastră de felicitare
+            congratulationsForm.ShowDialog(); // Afișați fereastra de felicitare
+
+            System.Threading.Thread.Sleep(500);
+
+            form.Close(); // Închide fereastra principală (Form1)
+            StartScreenForm startScreenForm = new StartScreenForm(); // Deschide fereastra de start
+            startScreenForm.ShowDialog();
+        }
+
     }
 }

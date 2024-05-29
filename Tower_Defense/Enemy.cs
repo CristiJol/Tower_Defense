@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 
 namespace Tower_Defense
@@ -32,25 +33,39 @@ namespace Tower_Defense
         }
         public bool Move()
         {
-            if (path[0].point.X - speed < currentPosition.point.X
-                && path[0].point.X + speed > currentPosition.point.X
-                && path[0].point.Y - speed < currentPosition.point.Y
-                && path[0].point.Y + speed > currentPosition.point.Y)
+            if (!Engine.isPaused)
             {
-                currentPosition = path[0];
-                path.RemoveAt(0);
-            }
-            switch (currentPosition.direction)
-            {
-                case "south": currentPosition.point = new PointF(currentPosition.point.X, currentPosition.point.Y + (float)speed); break;
-                case "east": currentPosition.point = new PointF(currentPosition.point.X + (float)speed, currentPosition.point.Y); break;
-                case "north": currentPosition.point = new PointF(currentPosition.point.X, currentPosition.point.Y - (float)speed); break;
-                case "west": currentPosition.point = new PointF(currentPosition.point.X - (float)speed, currentPosition.point.Y); break;
-                case "finish":
-                default:
-                    return true;
+                if (path[0].point.X - speed < currentPosition.point.X
+                    && path[0].point.X + speed > currentPosition.point.X
+                    && path[0].point.Y - speed < currentPosition.point.Y
+                    && path[0].point.Y + speed > currentPosition.point.Y)
+                {
+                    currentPosition = path[0];
+                    path.RemoveAt(0);
+                }
+                switch (currentPosition.direction)
+                {
+                    case "south": currentPosition.point = new PointF(currentPosition.point.X, currentPosition.point.Y + (float)speed); break;
+                    case "east": currentPosition.point = new PointF(currentPosition.point.X + (float)speed, currentPosition.point.Y); break;
+                    case "north": currentPosition.point = new PointF(currentPosition.point.X, currentPosition.point.Y - (float)speed); break;
+                    case "west": currentPosition.point = new PointF(currentPosition.point.X - (float)speed, currentPosition.point.Y); break;
+                    case "finish":
+                    default:
+                        return true;
+                }
             }
             return false;
+        }
+
+        public void TakeDamage(int damage)
+        {
+            health -= damage;
+            Console.WriteLine("Inamic a primit " + damage + " damage. Health: " + health);
+            if (health <= 0)
+            {
+                Console.WriteLine("Inamic eliminat!");
+                // Inamicul a fost eliminat (poate fi eliminat din joc sau altă acțiune specifică)
+            }
         }
         public void Draw()
         {
