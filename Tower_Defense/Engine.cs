@@ -13,11 +13,12 @@ namespace Tower_Defense
         }
         public static bool isGameWon = false;
 
-
+        
 
         public static Tile[,] tiles;
         public static Form1 form;
 
+        public static Tower selectedTower;
         public static List<Tower> towers = new List<Tower>();
         public static List<Enemy> enemies = new List<Enemy>() , currentWave = new List<Enemy>();
         public static List <Projectile> projectiles = new List<Projectile>();
@@ -87,15 +88,7 @@ namespace Tower_Defense
                 if (!isPaused) // Adaugă această verificare pentru a opri mișcarea proiectilelor în timpul pauzei
                 {
                     projectile.Move();
-
-                    // Verifică dacă proiectilul a atins inamicul și aplică damage-ul
-                    if (projectile.target != null && Distance(projectile.position, projectile.target.currentPosition.point) < 5) // Ajustează 5 la distanța potrivită
-                    {
-                        projectile.target.health -= projectile.damage;
-
-                        // Elimină proiectilul după ce a lovit inamicul
-                        projectiles.Remove(projectile);
-                    }
+                    CheckProjectileEnemyCollisions();
                 }
             }
             // Elimină inamicul după ce viața sa a ajuns sub 0
@@ -105,6 +98,7 @@ namespace Tower_Defense
                 {
                     enemies.Remove(enemies[i]);
                     i--;
+                    form.CurrentMoney += 25;
                 }
             }
             if (enemies.Count == 0 && currentWave.Count == 0)
@@ -128,22 +122,8 @@ namespace Tower_Defense
                 }
             }
         }
-        public static void RemoveDeadEnemies()
-        {
-            for (int i = 0; i < enemies.Count; i++)
-            {
-                if (enemies[i].currentPosition.direction == "finish")
-                {
-                    castleHealth -= enemies[i].damage;
-                    enemies.RemoveAt(i);
-                    i--;
-                }
-            }
-        }
-
         public static void Lose()
         {
-
             if (castleHealth <= 0)
             {
                 form.timer1.Stop();
@@ -169,35 +149,52 @@ namespace Tower_Defense
             if (tiles[location.X / tilex, location.Y / tiley].isPlaceable)
             {
                 isBlur = false;
-                Image img;
-                float range;
-                int attack; // Adaugă o variabilă pentru a stoca valoarea de atac (damage) în funcție de form.ID
+                Image img=null;
+                float range=0;
+                int cost = 0;
+                int attack=0; // Adaugă o variabilă pentru a stoca valoarea de atac (damage) în funcție de form.ID
 
                 // Atribuie valoarea de atac corespunzătoare în funcție de form.ID
                 if (form.ID == 1)
                 {
                     img = form.pictureBox2.Image;
                     range = 150;
+                    cost = 50;
                     attack = 20; // Schimbă valoarea în funcție de nevoile tale
                 }
                 else if (form.ID == 2)
                 {
                     img = form.pictureBox3.Image;
                     range = 200;
+                    cost = 150;
                     attack = 30; // Schimbă valoarea în funcție de nevoile tale
                 }
-                else
+                else if (form.ID == 3)
                 {
                     img = form.pictureBox4.Image;
                     range = 100;
+                    cost = 200;
                     attack = 15; // Schimbă valoarea în funcție de nevoile tale
                 }
-
-                Tower tower = new Tower(range, 0, tilex, tiley, img, new Point(location.X / tilex * tilex, location.Y / tiley * tiley), attack);
-                towers.Add(tower);
-                tiles[location.X / tilex, location.Y / tiley].isPlaceable = false;
+                if (img != null && cost <= form.CurrentMoney)
+                {
+                    Tower tower = new Tower(range, cost, tilex, tiley, img, new Point(location.X / tilex * tilex, location.Y / tiley * tiley), attack);
+                    towers.Add(tower);
+                    selectedTower = tower;
+                    tiles[location.X / tilex, location.Y / tiley].isPlaceable = false;
+                    form.ID = 0;
+                    form.CurrentMoney -= cost;
+                }
             }
             DrawEverything();
+        }
+        public static void SelectTower(Point location)
+        {
+            foreach(Tower tower in towers)
+            {
+                if (tower.position == new Point(location.X / tilex * tilex, location.Y / tiley * tiley))
+                    selectedTower = tower;
+            }
         }
 
 
@@ -240,7 +237,8 @@ namespace Tower_Defense
             }
             foreach (Tower tower in towers)
             {
-                tower.DrawRange();
+                if (tower == selectedTower)
+                    tower.DrawRange();
                 tower.Draw();
             }
             foreach (Enemy enemy in enemies)
@@ -281,9 +279,9 @@ namespace Tower_Defense
                 foreach (Enemy enemy in enemies)
                 {
                     // Verifică dacă proiectilul atinge inamicul
-                    if (Distance(projectile.position, enemy.currentPosition.point) < 5) // Setează o distanță prag aici
+                    if (Distance(projectile.position, enemy.currentPosition.point) < projectile.sizex) // Setează o distanță prag aici
                     {
-                        projectile.ApplyDamage();
+                        enemy.TakeDamage(projectile.damage);
                         projectiles.RemoveAt(i);
                         i--;
                         break; // Ieșim din bucla foreach, deoarece proiectilul a lovit deja un inamic
@@ -291,7 +289,6 @@ namespace Tower_Defense
                 }
             }
         }
-        
 
 
         public static float Distance(PointF p1, PointF p2)

@@ -8,10 +8,11 @@ namespace Tower_Defense
         public int damage;
         public Image image;
         public PointF position;
-        public Enemy target;
+        public PointF target;
+        public int lifespan;
 
         // Adaugă un constructor care să primească toți cei 8 parametri
-        public Projectile(Image image, double speed, int damage, double sizex, double sizey, PointF position, Enemy target, double towerDamage)
+        public Projectile(Image image, double speed, int damage, double sizex, double sizey, PointF position, PointF target, int lifespan)
         {
             this.image = image;
             this.speed = speed;
@@ -20,34 +21,28 @@ namespace Tower_Defense
             this.sizey = sizey;
             this.position = position;
             this.target = target;
+            this.lifespan = lifespan;
         }
         public void Move()
         {
             if (!Engine.isPaused) // Adaugă această verificare pentru a opri mișcarea proiectilului în timpul pauzei
             {
-                float percent = (float)speed / Engine.Distance(position, target.currentPosition.point);
-                float x = position.X + percent * (target.currentPosition.point.X - position.X);
-                float y = position.Y + percent * (target.currentPosition.point.Y - position.Y);
+                float percent = (float)speed / Engine.Distance(position, target);
+                float x = position.X + percent * (target.X - position.X);
+                float y = position.Y + percent * (target.Y - position.Y);
                 position = new PointF(x, y);
-
-                if (Engine.Distance(position, target.currentPosition.point) < 5) // setează o distanță prag aici
+                lifespan--;
+                if (lifespan <= 0)
                 {
-                    ApplyDamage();
-                    // Elimină proiectilul sau efectuează alte acțiuni specifice
+                    Engine.projectiles.Remove(this);
                 }
             }
         }
-        public void ApplyDamage()
-        {
-            target.TakeDamage((int)towerDamage); // Aplică damage-ul specific turnului
-        }
+        
         public void Draw()
         {
             Engine.graphics.DrawImage(image, position.X, position.Y, (int)sizex, (int)sizey);
         }
-
-        public double towerDamage; // Adaugă atributul damage specific turnului
-
 
 
     }

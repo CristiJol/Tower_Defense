@@ -24,6 +24,7 @@ namespace Tower_Defense
             Engine.enemies.Clear();
             Engine.projectiles.Clear();
             Engine.time = 0;
+            Engine.castleHealth = 100;
             Form1 gameForm = new Form1(); // Înlocuiește cu numele corect al ferestrei principale
             gameForm.Show();
             this.Hide(); // Ascunde fereastra de start

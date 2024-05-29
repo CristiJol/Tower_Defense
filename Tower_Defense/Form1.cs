@@ -16,6 +16,9 @@ namespace Tower_Defense
         public int ID;
         public bool isPaused;
 
+        private int money = 150;
+        public int CurrentMoney {  get=>money; set { money = value; goldLabel.Text = $"{money}g"; }}
+
         public Form1()
         {
             InitializeComponent();
@@ -40,6 +43,7 @@ namespace Tower_Defense
         }
         private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
         {
+            Engine.SelectTower(e.Location);
             Engine.AddNewTower(e.Location);
         }
         private void timer1_Tick(object sender, EventArgs e)

@@ -13874,7 +13874,7 @@
   <data name="pictureBox5.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAhkAAAHRCAYAAADHSavPAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAL
-        EAAACxABrSO9dQAA/7JJREFUeF7s/QWUJPedoIvevffO2BY0F3NlVRZXVlVmZTEzMzMzM3N1UVd3VzOT
+        DwAACw8BkvkDpQAA/7JJREFUeF7s/QWUJPedoIvevffO2BY0F3NlVRZXVlVmZTEzMzMzM3N1UVd3VzOT
         1Gq1mGUxWpZFJplJY5YlC4yS7fneL6LrzTv37b63Mzv27K4nvnN+JyIjMisjo+Kc3/fn/0NDQ0NDQ0ND
         Q0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0ND
         Q0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0ND
@@ -20069,6 +20069,6 @@
     <value>17, 17</value>
   </metadata>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>38</value>
+    <value>25</value>
   </metadata>
 </root>

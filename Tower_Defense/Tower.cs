@@ -59,7 +59,7 @@ namespace Tower_Defense
         public void Shoot(Enemy enemy)
         {
             if (Engine.time % 10 == 0)
-                Engine.projectiles.Add(new Projectile(image, 25, damage, Engine.tilex / 2, Engine.tiley / 2, new PointF(position.X + Engine.tilex / 2, position.Y + Engine.tiley / 2), enemy, damage));
+                Engine.projectiles.Add(new Projectile(image, 25, damage, Engine.tilex / 2, Engine.tiley / 2, new PointF(position.X + Engine.tilex / 2, position.Y + Engine.tiley / 2), enemy.currentPosition.point, (int)(range/25)));
             // ^ Utilizează 'damage' în loc de 'attack' în constructorul Projectile
         }
     }

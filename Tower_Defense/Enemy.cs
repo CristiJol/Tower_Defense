@@ -61,11 +61,6 @@ namespace Tower_Defense
         {
             health -= damage;
             Console.WriteLine("Inamic a primit " + damage + " damage. Health: " + health);
-            if (health <= 0)
-            {
-                Console.WriteLine("Inamic eliminat!");
-                // Inamicul a fost eliminat (poate fi eliminat din joc sau altă acțiune specifică)
-            }
         }
         public void Draw()
         {
